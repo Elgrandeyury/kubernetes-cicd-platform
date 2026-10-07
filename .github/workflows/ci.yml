@@ -68,6 +68,7 @@ jobs:
       - name: Scan container image
         uses: aquasecurity/trivy-action@v0.36.0
         with:
+          version: v0.75.0
           image-ref: platform-app:ci
           format: table
           exit-code: "1"
@@ -77,6 +78,7 @@ jobs:
       - name: Scan Kubernetes configuration
         uses: aquasecurity/trivy-action@v0.36.0
         with:
+          version: v0.75.0
           scan-type: config
           scan-ref: k8s
           format: table
@@ -86,6 +88,7 @@ jobs:
       - name: Scan Helm configuration
         uses: aquasecurity/trivy-action@v0.36.0
         with:
+          version: v0.75.0
           scan-type: config
           scan-ref: helm/platform-app
           format: table
