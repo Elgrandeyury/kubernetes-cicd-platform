@@ -67,6 +67,11 @@ jobs:
 
       - name: Scan container image
         uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          # The upstream Python base image embeds a third-party SBOM that still
+          # lists superseded packages. Scan the live filesystem/package metadata
+          # instead to avoid duplicate stale-package false positives.
+          TRIVY_DISABLE_ANALYZERS: sbom
         with:
           version: v0.75.0
           image-ref: platform-app:ci
