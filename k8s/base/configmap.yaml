@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-app-config
+  namespace: platform-app
+data:
+  APP_ENV: "base"
