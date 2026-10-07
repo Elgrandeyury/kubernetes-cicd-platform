@@ -1,0 +1,6 @@
+apiVersion: v2
+name: platform-app
+description: Production-style Kubernetes application chart for the CI/CD platform portfolio project.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
