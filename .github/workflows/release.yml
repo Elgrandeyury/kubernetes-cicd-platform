@@ -12,6 +12,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_REPOSITORY: ghcr.io/elgrandeyury/kubernetes-cicd-platform
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,8 +34,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
-            ghcr.io/${{ github.repository }}:main
+            ${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}
+            ${{ env.IMAGE_REPOSITORY }}:main
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
