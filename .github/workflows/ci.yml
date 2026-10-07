@@ -65,13 +65,8 @@ jobs:
           tags: platform-app:ci
           load: true
 
-      - name: Scan container image
+      - name: Scan container OS packages
         uses: aquasecurity/trivy-action@v0.36.0
-        env:
-          # The upstream Python base image embeds a third-party SBOM that still
-          # lists superseded packages. Scan the live filesystem/package metadata
-          # instead to avoid duplicate stale-package false positives.
-          TRIVY_DISABLE_ANALYZERS: sbom
         with:
           version: v0.75.0
           image-ref: platform-app:ci
@@ -79,6 +74,21 @@ jobs:
           exit-code: "1"
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+          vuln-type: os
+          scanners: vuln
+
+      - name: Scan Python dependencies
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: v0.75.0
+          scan-type: fs
+          scan-ref: app
+          format: table
+          exit-code: "1"
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          vuln-type: library
+          scanners: vuln
 
       - name: Scan Kubernetes configuration
         uses: aquasecurity/trivy-action@v0.36.0
