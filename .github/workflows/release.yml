@@ -1,0 +1,53 @@
+name: Platform Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish immutable container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:main
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Validate Helm chart
+        run: |
+          helm lint helm/platform-app
+          helm template platform-app helm/platform-app --set image.tag=${{ github.sha }} > /tmp/platform-app.yaml
+
+      - name: Package Helm chart
+        run: helm package helm/platform-app --destination /tmp
+
+      - name: Upload Helm package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-app-chart
+          path: /tmp/platform-app-*.tgz
