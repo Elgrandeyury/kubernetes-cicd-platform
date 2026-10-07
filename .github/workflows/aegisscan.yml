@@ -1,0 +1,49 @@
+name: AegisScan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "k8s/**"
+      - ".aegisscan.yml"
+      - ".github/workflows/aegisscan.yml"
+  pull_request:
+    paths:
+      - "k8s/**"
+      - ".aegisscan.yml"
+      - ".github/workflows/aegisscan.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install AegisScan v0.2
+        run: pip install "git+https://github.com/Elgrandeyury/aegisscan-cloud-security.git@10f8147545e87328f9660b8c2453a94c46e7b7d0"
+
+      - name: Scan Kubernetes manifests
+        run: |
+          mkdir -p reports
+          aegisscan scan k8s \
+            --config .aegisscan.yml \
+            --json reports/aegisscan.json \
+            --html reports/aegisscan.html \
+            --sarif reports/aegisscan.sarif
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aegisscan-kubernetes-reports
+          path: reports/
+          if-no-files-found: warn
