@@ -66,7 +66,7 @@ jobs:
           load: true
 
       - name: Scan container image
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: platform-app:ci
           format: table
@@ -75,7 +75,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Scan Kubernetes configuration
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: k8s
@@ -84,7 +84,7 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Scan Helm configuration
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: helm/platform-app
