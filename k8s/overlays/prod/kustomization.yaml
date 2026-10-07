@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: platform-app
+resources:
+  - ../../base
+patches:
+  - target:
+      kind: ConfigMap
+      name: platform-app-config
+    patch: |-
+      - op: replace
+        path: /data/APP_ENV
+        value: production
+  - target:
+      kind: Ingress
+      name: platform-app
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: platform.example.com
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: platform-app
+    patch: |-
+      - op: replace
+        path: /spec/maxReplicas
+        value: 10
+images:
+  - name: ghcr.io/elgrandeyury/kubernetes-cicd-platform
+    newTag: stable
