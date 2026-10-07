@@ -1,0 +1,12 @@
+scan:
+  minimum_severity: low
+  ignore_paths:
+    - "helm/**"
+
+rules:
+  disabled: []
+
+ci:
+  # Existing public ingress may be intentional; block only critical findings
+  # during the first live integration and review high findings from reports.
+  fail_on: critical
